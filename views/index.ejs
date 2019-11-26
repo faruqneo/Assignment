@@ -1,0 +1,95 @@
+<%- include('./includes/head.ejs') %>
+
+<nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="/">WebSiteName</a>
+      </div>
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+        <!-- <li><a href="#">Page 1</a></li>
+        <li><a href="#">Page 2</a></li>
+        <li><a href="#">Page 3</a></li> -->
+      </ul>
+    </div>
+  </nav>
+    
+  <div class="container">
+    <h3>Right Aligned Navbar</h3>
+    <p>The .navbar-right class is used to right-align navigation bar buttons.</p>
+    <form class="form-inline">
+        <div class="form-group">
+          <label for="name">Winner Name:</label>
+          <input type="name" class="form-control" id="name" >
+        </div>
+        <div class="from-group">
+            <button type="button" class="btn btn-default" onclick="search()">Submit</button>
+        </div>
+      </form><br>
+
+      <table border="0" cellpadding="0" width="100%" id='providersFormElementsTable' class="table table-striped">
+      </table>
+
+      <div class="message"></div>
+
+  </div>
+
+<%- include('./includes/foot.ejs') %>
+
+<script>
+function capitalize(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+}
+
+    const search = async() => {
+        event.preventDefault();
+
+        let fname = $("#name").val();
+        let name = capitalize(fname);
+        let result = await axios.get('http://api.nobelprize.org/v1/laureate.json');
+        let {data} = result;
+        console.log(name);
+        let winner = data.laureates.filter(item => (item.firstname || item.surname) === name) || 'NA';
+        console.log(winner);
+        $("#providersFormElementsTable").empty();
+
+        if(winner.length)
+        {
+          $("#providersFormElementsTable").append(`
+          <thead>
+              <tr>
+                <th>First Name </th>
+                <th>Last Name </th>
+                <th>Field </th>
+                <th>Country </th>
+                <th>Year </th>
+              </tr>
+            </thead>`);
+        for(let i of winner)
+        $("#providersFormElementsTable").append(`
+          <tbody>
+            <tr>
+            <td>${i.firstname}</td>
+            <td>${i.surname}</td>
+            <td>${i.prizes.map(it => it.category)}</td>
+            <td>${i.bornCountry}</td>
+            <td>${i.prizes.map(iy => iy.year)}</td>
+            </tr>
+            </tbody>`);
+        }
+        else
+        
+          $("#providersFormElementsTable").append(`<tbody>
+            <tr>
+            <td>NA</td>
+            <td>NA</td>
+            <td>NA</td>
+            <td>NA</td>
+            <td>NA</td>
+            </tr>
+            </tbody>`);
+        
+        
+        //alert("hello");
+    }
+</script>
