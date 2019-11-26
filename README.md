@@ -1,7 +1,5 @@
 # Assignment
 
-Could you create a solution for the below problem and send us github repo link of the same?
-
 Problem:
 
 Write a simple application to search for Nobel Prize winners.
