@@ -59,13 +59,20 @@ function capitalize(str) {
         console.log(name);
         let winner = data.laureates.filter(item => item.firstname === name || item.surname === name ) || 'NA';
         console.log(winner);
+        console.log("-----------------");
         $("#providersFormElementsTable").empty();
 
         if(winner.length)
         {
           let prizeData = await axios.get('http://api.nobelprize.org/v1/prize.json');
-          let { prizes } = prizeData.data;
-
+          let prizesRecoard = prizeData.data;
+          let share = null;
+          //console.log(prizesRecoard)
+              
+              //let filterPrizes = prizesRecoard.prizes.filter(doc => doc.year === year && doc.category === category);
+              //.filter(it => it.year === year && it.category === category)
+              //console.log(filterPrizes)
+              // ${filterPrizes.laureates.map(ip => ip.firstname)} 
           $("#providersFormElementsTable").append(`
           <thead>
               <tr>
@@ -79,6 +86,16 @@ function capitalize(str) {
             </thead>`);
         for(let i of winner)
             {
+               i.prizes.map(iy => {
+                 let {year, category} = iy;
+                 let filterPrizes = prizesRecoard.prizes.filter(doc => doc.year === year && doc.category === category);
+                 
+                 share = filterPrizes[0].laureates.map(ir => ir.firstname)
+                 console.log(share)
+               });
+              
+              //let filterPrizes = prizesRecoard.prizes.filter(doc => doc.year === yearData && doc.category === categoryData);
+
               $("#providersFormElementsTable").append(`
               <tbody>
                 <tr>
@@ -87,7 +104,7 @@ function capitalize(str) {
                 <td>${i.prizes.map(it => it.category)}</td>
                 <td>${i.bornCountry}</td>
                 <td>${i.prizes.map(iy => iy.year)}</td>
-                <td> xxx </td>
+                <td>${share}</td>
                 </tr>
                 </tbody>`);
             }

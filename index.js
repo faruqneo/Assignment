@@ -25,4 +25,8 @@ app.get('/test', (req, res) => {
     res.send(`Server is running on port ${PORT}.`);
 })
 
+app.all('*', (req, res) => {
+    res.send(`Access denied`);
+})
+
 app.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
