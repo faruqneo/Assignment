@@ -37,8 +37,16 @@
 <%- include('./includes/foot.ejs') %>
 
 <script>
-function capitalize(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+function capitalize(str) {
+    //return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+    //return str[0].toUpperCase() + str.slice(1);
+    var pieces = str.split(" ");
+    for ( let i = 0; i < pieces.length; i++ )
+    {
+        let j = pieces[i].charAt(0).toUpperCase();
+        pieces[i] = j + pieces[i].substr(1);
+    }
+    return pieces.join(" ");
 }
 
     const search = async() => {
@@ -49,12 +57,15 @@ function capitalize(string) {
         let result = await axios.get('http://api.nobelprize.org/v1/laureate.json');
         let {data} = result;
         console.log(name);
-        let winner = data.laureates.filter(item => (item.firstname || item.surname) === name) || 'NA';
+        let winner = data.laureates.filter(item => item.firstname === name || item.surname === name ) || 'NA';
         console.log(winner);
         $("#providersFormElementsTable").empty();
 
         if(winner.length)
         {
+          let prizeData = await axios.get('http://api.nobelprize.org/v1/prize.json');
+          let { prizes } = prizeData.data;
+
           $("#providersFormElementsTable").append(`
           <thead>
               <tr>
@@ -63,22 +74,25 @@ function capitalize(string) {
                 <th>Field </th>
                 <th>Country </th>
                 <th>Year </th>
+                <th>Shared with </th>
               </tr>
             </thead>`);
         for(let i of winner)
-        $("#providersFormElementsTable").append(`
-          <tbody>
-            <tr>
-            <td>${i.firstname}</td>
-            <td>${i.surname}</td>
-            <td>${i.prizes.map(it => it.category)}</td>
-            <td>${i.bornCountry}</td>
-            <td>${i.prizes.map(iy => iy.year)}</td>
-            </tr>
-            </tbody>`);
+            {
+              $("#providersFormElementsTable").append(`
+              <tbody>
+                <tr>
+                <td>${i.firstname}</td>
+                <td>${i.surname}</td>
+                <td>${i.prizes.map(it => it.category)}</td>
+                <td>${i.bornCountry}</td>
+                <td>${i.prizes.map(iy => iy.year)}</td>
+                <td> xxx </td>
+                </tr>
+                </tbody>`);
+            }
         }
         else
-        
           $("#providersFormElementsTable").append(`<tbody>
             <tr>
             <td>NA</td>
